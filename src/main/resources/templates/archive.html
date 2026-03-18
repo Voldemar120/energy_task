@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EnergyTask - Редактирование задачи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-dark text-white">
+<section>
+    <div class="container">
+        <!-- Навигация -->
+        <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
+            <h1><i class="bi bi-archive"></i> Архив задач</h1>
+            <div class="btn-group">
+                <a th:href="@{/tasks}" class="btn btn-outline-light">
+                    <i class="bi bi-table"></i> Таблица
+                </a>
+                <a th:href="@{/board}" class="btn btn-outline-light">
+                    <i class="bi bi-kanban"></i> Доска
+                </a>
+            </div>
+        </div>
+
+        <!-- Таблица с архивными задачами -->
+        <table class="table table-sm table-dark table-striped" th:if="${not #lists.isEmpty(tasks)}">
+            <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Задача</th>
+                <th>Описание</th>
+                <th>Приоритет</th>
+                <th>Дата создания</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task, iterStat : ${tasks}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${task.title}"></td>
+                <td th:text="${task.description}"></td>
+                <td>
+                    <span th:if="${task.priority == 'HIGH'}" class="badge bg-danger">Высокий</span>
+                    <span th:if="${task.priority == 'MEDIUM'}" class="badge bg-warning text-dark">Средний</span>
+                    <span th:if="${task.priority == 'LOW'}" class="badge bg-success">Низкий</span>
+                </td>
+                <td th:text="${task.formattedCreatedAt}"></td>
+                <td>
+                    <a class="btn btn-sm btn-outline-success" th:href="@{/archive/restore/{id}(id=${task.id})}"
+                       title="Восстановить">
+                        <i class="bi bi-arrow-counterclockwise"></i> Восстановить
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Сообщение если архив пуст -->
+        <div class="alert alert-info text-center mt-3" th:if="${#lists.isEmpty(tasks)}">
+            <i class="bi bi-archive fs-1 d-block mb-3"></i>
+            📭 Архив пуст
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

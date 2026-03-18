@@ -1,0 +1,139 @@
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Eclipse ###
+.project
+.classpath
+.settings/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.externalToolBuilders/
+*.launch
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+### Java ###
+*.class
+*.log
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+### Spring Boot ###
+!/target/*.jar
+!/target/*.war
+application-*.properties
+application-*.yml
+!application-prod.properties
+!application-dev.properties
+application.properties
+application.yml
+
+### Logs ###
+logs/
+*.log
+*.stacktrace
+spring-boot-logger/
+console.log
+
+### OS ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.lnk
+desktop.ini
+
+### Test ###
+test-output/
+*.test
+*.test.js
+*.spec.js
+
+### Debug ###
+heapdump*.hprof
+*.hprof
+dump.rdb
+
+### Gradle (если используете) ###
+.gradle/
+build/
+!gradle-wrapper.jar
+gradle-app.setting
+gradle/
+gradlew
+gradlew.bat
+
+### Custom for EnergyTask ###
+# База данных (если используете локальную)
+*.db
+*.sqlite
+*.h2.db
+
+# Секретные ключи
+*.p12
+*.jks
+*.keystore
+*.pem
+*.crt
+*.key
+
+# Профили (исключаем все, кроме prod)
+application-*.properties
+!application-prod.properties
+
+# Временные файлы
+temp/
+tmp/
+*.tmp
+*.temp
+
+# IDE настройки (общие)
+.vscode/
+.idea/
+*.iml

@@ -1,0 +1,250 @@
+/* Горизонтальное расположение колонок */
+.board-container {
+    padding: 20px;
+    overflow-x: auto;
+    width: 100%;
+}
+
+.board-columns {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 20px;
+    min-width: min-content;
+    padding: 10px 0;
+    align-items: stretch;
+}
+
+/* Фиксированная ширина колонок */
+.column {
+    flex: 0 0 320px !important;
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+    background: #ebecf0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 120px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Заголовок колонки */
+.column-header {
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.column-todo .column-header {
+    background: #ffc107;
+    color: #000;
+}
+.column-progress .column-header {
+    background: #17a2b8;
+    color: #fff;
+}
+.column-done .column-header {
+    background: #28a745;
+    color: #fff;
+}
+
+/* Тело колонки */
+.column-body {
+    padding: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
+    min-height: 200px;
+    transition: background-color 0.2s;
+}
+
+/* Drag & Drop стили для колонок */
+.column-body.drag-over {
+    background-color: rgba(0, 123, 255, 0.2) !important;
+    border: 2px dashed #007bff !important;
+}
+
+/* Карточка задачи */
+.task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: grab;
+    transition: all 0.2s;
+    position: relative;
+    border-left: 4px solid transparent;
+    user-select: none;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+/* Drag & Drop стили для карточек */
+.task-card.dragging {
+    opacity: 0.5 !important;
+    transform: rotate(1deg) scale(0.95) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+    cursor: grabbing;
+}
+
+/* Цвета приоритетов */
+.task-card.high { border-left-color: #dc3545; }
+.task-card.medium { border-left-color: #ffc107; }
+.task-card.low { border-left-color: #28a745; }
+
+/* Просроченная задача */
+.task-card.overdue {
+    background: #fff3f3;
+    border: 1px solid #dc3545;
+}
+
+/* Заголовок карточки */
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.task-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0;
+    word-break: break-word;
+}
+
+.task-description {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 10px;
+    word-break: break-word;
+}
+
+/* Мета-информация */
+.task-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+/* Кнопки действий */
+.task-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    background: rgba(255,255,255,0.9);
+    border-radius: 5px;
+    padding: 2px;
+    display: flex;
+    gap: 2px;
+    z-index: 10;
+}
+
+.task-card:hover .task-actions {
+    opacity: 1;
+}
+
+.task-actions .btn {
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+/* Бейдж приоритета */
+.priority-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.priority-high { background: #dc3545; color: white; }
+.priority-medium { background: #ffc107; color: black; }
+.priority-low { background: #28a745; color: white; }
+
+/* Футер колонки */
+.column-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+/* Скроллбар */
+.column-body::-webkit-scrollbar {
+    width: 6px;
+}
+.column-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.column-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+.column-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .board-columns {
+        flex-direction: column !important;
+        align-items: center;
+    }
+
+    .column {
+        width: 100% !important;
+        max-width: 400px !important;
+        flex: 0 0 auto !important;
+    }
+}
+
+/* Стили для формы логина */
+.form-sigin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Стили для таблицы задач */
+.action-cell {
+    min-width: 280px;
+    white-space: nowrap;
+    padding-left: 15px !important;
+}
+
+.action-cell .btn:first-child {
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .action-cell {
+        min-width: auto;
+        white-space: normal;
+        padding-left: 8px !important;
+    }
+    .action-cell .btn {
+        margin-bottom: 5px;
+        margin-left: 0;
+    }
+}
