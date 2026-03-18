@@ -47,10 +47,12 @@
             <div class="column-body" id="todo-column">
                 <div th:each="task : ${todoTasks}"
                      class="task-card"
-                     th:classappend="${task.priority != null ? task.priority.toLowerCase() : 'medium'} +
-                                     ${task.overdue ? ' overdue' : ''}"
+                     th:classappend="${task.priority != null ? task.priority.toLowerCase() : 'medium'}"
                      draggable="true"
-                     th:attr="data-id=${task.id}">
+                     th:attr="data-id=${task.id}, data-task-id=${task.id}"
+                     data-bs-toggle="modal"
+                     data-bs-target="#editTaskModal"
+                     onclick="loadTaskToModal(this)">
 
                     <div class="task-header">
                         <h6 class="task-title" th:text="${task.title}">Задача</h6>
@@ -59,33 +61,10 @@
                               th:text="${task.priority != null ? task.priority : 'MEDIUM'}">MEDIUM</span>
                     </div>
 
-                    <div class="task-description" th:text="${task.description}">Описание задачи</div>
-
-                    <!-- Срок выполнения -->
-                    <div th:if="${task.dueDate != null}" class="small"
-                         th:classappend="${task.overdue ? 'text-danger' : 'text-muted'}">
-                        <i class="bi bi-calendar"></i>
-                        <span th:text="${task.formattedDueDate}">10.03.2026</span>
-                        <span th:if="${task.overdue}" class="badge bg-danger">Просрочено!</span>
-                    </div>
-
-                    <div class="task-meta">
-                        <span><i class="bi bi-clock"></i> <span th:text="${task.formattedCreatedAt}">09.03.2026</span></span>
-                    </div>
-
-                    <!-- Кнопки действий для колонки "Нужно сделать" -->
-                    <div class="task-actions btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary" th:href="@{/tasks/edit/{id}(id=${task.id}, redirect='board')}" title="Редактировать">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <a class="btn btn-outline-success" th:href="@{/tasks/toggle-status/{id}(id=${task.id})}"
-                           title="Начать выполнение">
-                            <i class="bi bi-play-circle"></i> В работу
-                        </a>
-                        <a class="btn btn-outline-danger" th:href="@{/tasks/delete/{id}(id=${task.id})}"
-                           onclick="return confirm('Удалить задачу?')" title="Удалить">
-                            <i class="bi bi-trash"></i>
-                        </a>
+                    <div class="task-preview small text-muted">
+                        <span th:if="${task.dueDate != null}">
+                            <i class="bi bi-calendar"></i> <span th:text="${task.formattedDueDate}"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -105,10 +84,12 @@
             <div class="column-body" id="inprogress-column">
                 <div th:each="task : ${inProgressTasks}"
                      class="task-card"
-                     th:classappend="${task.priority != null ? task.priority.toLowerCase() : 'medium'} +
-                                     ${task.overdue ? ' overdue' : ''}"
+                     th:classappend="${task.priority != null ? task.priority.toLowerCase() : 'medium'}"
                      draggable="true"
-                     th:attr="data-id=${task.id}">
+                     th:attr="data-id=${task.id}, data-task-id=${task.id}"
+                     data-bs-toggle="modal"
+                     data-bs-target="#editTaskModal"
+                     onclick="loadTaskToModal(this)">
 
                     <div class="task-header">
                         <h6 class="task-title" th:text="${task.title}">Задача</h6>
@@ -117,30 +98,10 @@
                               th:text="${task.priority != null ? task.priority : 'MEDIUM'}">MEDIUM</span>
                     </div>
 
-                    <div class="task-description" th:text="${task.description}">Описание</div>
-
-                    <div th:if="${task.dueDate != null}" class="small"
-                         th:classappend="${task.overdue ? 'text-danger' : 'text-muted'}">
-                        <i class="bi bi-calendar"></i> <span th:text="${task.formattedDueDate}">10.03.2026</span>
-                    </div>
-
-                    <div class="task-meta">
-                        <span><i class="bi bi-clock"></i> <span th:text="${task.formattedCreatedAt}">09.03.2026</span></span>
-                    </div>
-
-                    <!-- Кнопки действий для колонки "В процессе" -->
-                    <div class="task-actions btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary" th:href="@{/tasks/edit/{id}(id=${task.id}, redirect='board')}" title="Редактировать">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <a class="btn btn-outline-success" th:href="@{/tasks/toggle-status/{id}(id=${task.id})}"
-                           title="Завершить задачу">
-                            <i class="bi bi-check-circle"></i> Завершить
-                        </a>
-                        <a class="btn btn-outline-danger" th:href="@{/tasks/delete/{id}(id=${task.id})}"
-                           onclick="return confirm('Удалить задачу?')" title="Удалить">
-                            <i class="bi bi-trash"></i>
-                        </a>
+                    <div class="task-preview small text-muted">
+                        <span th:if="${task.dueDate != null}">
+                            <i class="bi bi-calendar"></i> <span th:text="${task.formattedDueDate}"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -160,10 +121,12 @@
             <div class="column-body" id="done-column">
                 <div th:each="task : ${doneTasks}"
                      class="task-card"
-                     th:classappend="${task.priority != null ? task.priority.toLowerCase() : 'medium'} +
-                                     ${task.overdue ? ' overdue' : ''}"
+                     th:classappend="${task.priority != null ? task.priority.toLowerCase() : 'medium'}"
                      draggable="true"
-                     th:attr="data-id=${task.id}">
+                     th:attr="data-id=${task.id}, data-task-id=${task.id}"
+                     data-bs-toggle="modal"
+                     data-bs-target="#editTaskModal"
+                     onclick="loadTaskToModal(this)">
 
                     <div class="task-header">
                         <h6 class="task-title" th:text="${task.title}">Задача</h6>
@@ -172,33 +135,10 @@
                               th:text="${task.priority != null ? task.priority : 'MEDIUM'}">MEDIUM</span>
                     </div>
 
-                    <div class="task-description" th:text="${task.description}">Описание</div>
-
-                    <div th:if="${task.dueDate != null}" class="small text-muted">
-                        <i class="bi bi-calendar"></i> <span th:text="${task.formattedDueDate}">10.03.2026</span>
-                    </div>
-
-                    <div class="task-meta">
-                        <span><i class="bi bi-clock"></i> <span th:text="${task.formattedCreatedAt}">09.03.2026</span></span>
-                    </div>
-
-                    <!-- Кнопки действий для колонки "Готово" -->
-                    <div class="task-actions btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary" th:href="@{/tasks/edit/{id}(id=${task.id}, redirect='board')}" title="Редактировать">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <a class="btn btn-outline-secondary" th:href="@{/tasks/toggle-status/{id}(id=${task.id})}"
-                           title="Вернуть в работу">
-                            <i class="bi bi-arrow-counterclockwise"></i> Вернуть
-                        </a>
-                        <a class="btn btn-outline-danger" th:href="@{/tasks/delete/{id}(id=${task.id})}"
-                           onclick="return confirm('Удалить задачу?')" title="Удалить">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                        <a class="btn btn-outline-secondary" th:href="@{/tasks/archive/{id}(id=${task.id})}"
-                           title="В архив" onclick="return confirm('Отправить задачу в архив?')">
-                            <i class="bi bi-archive"></i>
-                        </a>
+                    <div class="task-preview small text-muted">
+                        <span th:if="${task.dueDate != null}">
+                            <i class="bi bi-calendar"></i> <span th:text="${task.formattedDueDate}"></span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -206,6 +146,78 @@
                 <a th:href="@{/archive}" class="btn btn-light btn-sm w-100">
                     <i class="bi bi-archive"></i> Архив
                 </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования задачи -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Редактирование задачи</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm" th:action="@{/tasks/save}" method="post">
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                    <input type="hidden" name="redirect" value="board"/>
+                    <input type="hidden" id="taskId" name="id"/>
+
+                    <div class="mb-3">
+                        <label for="taskTitle" class="form-label">Название</label>
+                        <input type="text" class="form-control bg-dark text-white" id="taskTitle" name="title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Описание</label>
+                        <textarea class="form-control bg-dark text-white" id="taskDescription" name="description" rows="3"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="taskPriority" class="form-label">Приоритет</label>
+                            <select class="form-select bg-dark text-white" id="taskPriority" name="priority">
+                                <option value="LOW">🟢 Низкий</option>
+                                <option value="MEDIUM">🟡 Средний</option>
+                                <option value="HIGH">🔴 Высокий</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="taskColumn" class="form-label">Колонка</label>
+                            <select class="form-select bg-dark text-white" id="taskColumn" name="columnType">
+                                <option value="todo">📝 Нужно сделать</option>
+                                <option value="inprogress">⚡ В процессе</option>
+                                <option value="done">✅ Готово</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="taskDueDate" class="form-label">Срок выполнения</label>
+                            <input type="datetime-local" class="form-control bg-dark text-white" id="taskDueDate" name="dueDate">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check mt-4">
+                                <input type="checkbox" class="form-check-input" id="taskCompleted" name="completed">
+                                <label class="form-check-label" for="taskCompleted">Завершено</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -291,7 +303,6 @@
                     .then(data => {
                         if (data.success) {
                             console.log('Задача успешно перемещена');
-                            // Обновляем счетчики после перемещения
                             updateCounters();
                         } else {
                             console.error('Ошибка:', data.message);
@@ -314,6 +325,125 @@
             }
         });
     }
+
+    // Функция загрузки данных задачи в модальное окно
+    function loadTaskToModal(card) {
+        const taskId = card.getAttribute('data-id');
+        console.log('=== ЗАГРУЗКА ЗАДАЧИ С ID:', taskId, '===');
+
+        if (!taskId || taskId === 'undefined') {
+            console.error('ID задачи не определен');
+            alert('Ошибка: ID задачи не определен');
+            return;
+        }
+
+        const url = `/tasks/task/${taskId}`;
+        console.log('URL запроса:', url);
+
+        // Показываем индикатор загрузки
+        const modalBody = document.querySelector('#editTaskModal .modal-body');
+        const originalContent = modalBody.innerHTML;
+        modalBody.innerHTML = '<div class="text-center"><div class="spinner-border text-light" role="status"><span class="visually-hidden">Загрузка...</span></div></div>';
+
+        fetch(url)
+            .then(response => {
+                console.log('Статус ответа:', response.status);
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || `Ошибка ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(task => {
+                console.log('Данные задачи получены:', task);
+
+                // Восстанавливаем содержимое модального окна
+                modalBody.innerHTML = originalContent;
+
+                // Заполняем форму данными задачи
+                document.getElementById('taskId').value = task.id || '';
+                document.getElementById('taskTitle').value = task.title || '';
+                document.getElementById('taskDescription').value = task.description || '';
+                document.getElementById('taskPriority').value = task.priority || 'MEDIUM';
+                document.getElementById('taskColumn').value = task.columnType || 'todo';
+                document.getElementById('taskCompleted').checked = task.completed || false;
+
+                if (task.dueDate) {
+                    document.getElementById('taskDueDate').value = task.dueDate;
+                } else {
+                    document.getElementById('taskDueDate').value = '';
+                }
+
+                console.log('Форма заполнена успешно');
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки задачи:', error);
+                modalBody.innerHTML = originalContent;
+                alert('Не удалось загрузить данные задачи: ' + error.message);
+            });
+    }
+
+    // Отправка формы
+    document.addEventListener('submit', function(e) {
+        if (e.target.id === 'editTaskForm') {
+            e.preventDefault();
+            console.log('=== ОТПРАВКА ФОРМЫ ===');
+
+            const taskId = document.getElementById('taskId').value;
+            console.log('ID задачи из формы:', taskId);
+
+            if (!taskId || taskId === 'undefined') {
+                console.error('ID задачи не определен');
+                alert('Ошибка: ID задачи не определен');
+                return;
+            }
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Логируем все данные формы
+            console.log('Данные формы:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}: ${value}`);
+            }
+
+            // Отправляем форму
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(formData),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+                .then(response => {
+                    console.log('Ответ сервера статус:', response.status);
+                    console.log('Редирект:', response.redirected);
+                    console.log('URL:', response.url);
+
+                    if (response.redirected) {
+                        console.log('Перенаправление на:', response.url);
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        console.log('Успешно сохранено, закрываем модальное окно');
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+                        if (modal) {
+                            modal.hide();
+                        }
+                        location.reload();
+                    } else {
+                        response.text().then(text => {
+                            console.error('Ошибка сервера:', text);
+                            alert('Ошибка при сохранении задачи');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка сети:', error);
+                    alert('Ошибка сети при сохранении задачи');
+                });
+        }
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,11 +3,15 @@ package com.energytask.app.controller;
 import com.energytask.app.service.TaskService;
 import com.energytask.app.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import java.util.HashMap;
 
 import java.security.Principal;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/tasks")
@@ -80,5 +84,45 @@ public class TaskController {
     public String archiveTask(@PathVariable("id") Long id) {
         taskService.archiveTask(id);
         return "redirect:/tasks";
+    }
+
+    @GetMapping("/task/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getTask(@PathVariable Long id) {
+        System.out.println("=== ЗАПРОС ДАННЫХ ЗАДАЧИ ID: " + id + " ===");
+        try {
+            Task task = taskService.getTaskById(id);
+            if (task == null) {
+                System.out.println("Задача с ID " + id + " не найдена");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Задача не найдена"));
+            }
+
+            System.out.println("Задача найдена: " + task.getTitle());
+
+            // Форматируем дату безопасно
+            String dueDateFormatted = null;
+            if (task.getDueDate() != null) {
+                dueDateFormatted = task.getDueDate().toString().substring(0, 16);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", task.getId());
+            response.put("title", task.getTitle() != null ? task.getTitle() : "");
+            response.put("description", task.getDescription() != null ? task.getDescription() : "");
+            response.put("priority", task.getPriority() != null ? task.getPriority() : "MEDIUM");
+            response.put("columnType", task.getColumnType() != null ? task.getColumnType() : "todo");
+            response.put("completed", task.isCompleted());
+            response.put("dueDate", dueDateFormatted);
+
+            System.out.println("Ответ сформирован успешно");
+            return ResponseEntity.ok().body(response);
+
+        } catch (Exception e) {
+            System.out.println("!!! ОШИБКА: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 }

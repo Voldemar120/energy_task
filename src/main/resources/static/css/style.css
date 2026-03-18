@@ -248,3 +248,79 @@
         margin-left: 0;
     }
 }
+
+/* Стили для карточек задач (упрощенные) */
+.task-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: grab;
+    transition: all 0.2s;
+    border-left: 4px solid transparent;
+    position: relative;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.task-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0;
+    word-break: break-word;
+    flex: 1;
+}
+
+.task-preview {
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+/* Модальное окно */
+.modal-content.bg-dark {
+    border: 1px solid #495057;
+}
+
+.modal-header {
+    border-bottom: 1px solid #495057;
+}
+
+.modal-footer {
+    border-top: 1px solid #495057;
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Стили для приоритетов в модальном окне */
+.priority-HIGH, .priority-high { background: #dc3545; color: white; }
+.priority-MEDIUM, .priority-medium { background: #ffc107; color: black; }
+.priority-LOW, .priority-low { background: #28a745; color: white; }
+
+.priority-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
