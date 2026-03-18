@@ -3,19 +3,22 @@ package com.energytask.app.controller;
 import com.energytask.app.service.TaskService;
 import com.energytask.app.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
-import java.util.HashMap;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/tasks")
 public class TaskController {
+
+    private static final Logger LOGGER = Logger.getLogger(TaskController.class.getName());
 
     @Autowired
     private TaskService taskService;
@@ -89,18 +92,15 @@ public class TaskController {
     @GetMapping("/task/{id}")
     @ResponseBody
     public ResponseEntity<?> getTask(@PathVariable Long id) {
-        System.out.println("=== ЗАПРОС ДАННЫХ ЗАДАЧИ ID: " + id + " ===");
+        LOGGER.info("Запрос данных задачи ID: " + id);
         try {
             Task task = taskService.getTaskById(id);
             if (task == null) {
-                System.out.println("Задача с ID " + id + " не найдена");
+                LOGGER.warning("Задача с ID " + id + " не найдена");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "Задача не найдена"));
             }
 
-            System.out.println("Задача найдена: " + task.getTitle());
-
-            // Форматируем дату безопасно
             String dueDateFormatted = null;
             if (task.getDueDate() != null) {
                 dueDateFormatted = task.getDueDate().toString().substring(0, 16);
@@ -115,12 +115,10 @@ public class TaskController {
             response.put("completed", task.isCompleted());
             response.put("dueDate", dueDateFormatted);
 
-            System.out.println("Ответ сформирован успешно");
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
-            System.out.println("!!! ОШИБКА: " + e.getMessage());
-            e.printStackTrace();
+            LOGGER.severe("Ошибка при загрузке задачи: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
