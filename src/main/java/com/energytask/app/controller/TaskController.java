@@ -164,7 +164,7 @@ public class TaskController {
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.severe("Ошибка при загрузке задачи: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
