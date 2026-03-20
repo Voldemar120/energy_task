@@ -1,5 +1,6 @@
 package com.energytask.app.service;
 
+import com.energytask.app.entity.Attachment;
 import com.energytask.app.entity.Task;
 import com.energytask.app.entity.User;
 import com.energytask.app.repository.TaskRepository;
@@ -18,11 +19,11 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Task> getAllTask(){
+    public List<Task> getAllTask() {
         return taskRepository.findAll();
     }
 
-    public Task getTaskById(Long id){
+    public Task getTaskById(Long id) {
         return taskRepository.findById(id).orElse(null);
     }
 
@@ -57,7 +58,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTask(Long id){
+    public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
 
@@ -122,12 +123,12 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    public List<Task> getTasksByUser_Username(String username){
+    public List<Task> getTasksByUser_Username(String username) {
         return taskRepository.findTasksByUser_UsernameOrderByCreatedAtDesc(username);
     }
 
     // Для канбан-доски с сортировкой по позиции
-    public List<Task> getTasksByUserForBoard(String username){
+    public List<Task> getTasksByUserForBoard(String username) {
         return taskRepository.findTasksByUser_UsernameOrderByPositionAsc(username);
     }
 
@@ -150,5 +151,17 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found: " + id));
         task.setArchived(false);
         taskRepository.save(task);
+    }
+
+    // Attachment
+    @Transactional
+    public void addAttachmentToTask(Long taskId, String fileUrl, String fileName, String fileType, long fileSize) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found: " + taskId));
+
+        Attachment attachment = new Attachment(fileName, fileUrl, fileType, fileSize, task);
+        task.getAttachments().add(attachment);
+        taskRepository.save(task);
+        System.out.println("Вложение добавлено к задаче " + taskId + ": " + fileUrl);
     }
 }

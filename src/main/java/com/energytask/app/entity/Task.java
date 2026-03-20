@@ -3,12 +3,12 @@ package com.energytask.app.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "task")
 public class Task {
-
-    // ============= СУЩЕСТВУЮЩИЕ ПОЛЯ =============
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,19 +19,14 @@ public class Task {
     private String status;
     private boolean completed;
 
-
-    // Добавьте поле archived с аннотацией Column
     @Column(name = "archived", nullable = false)
-    private boolean archived = false; // По умолчанию false - задача не в архиве
+    private boolean archived = false;
 
-    // Геттер и сеттер для archived
-    public boolean isArchived() {
-        return archived;
-    }
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attachment> attachments = new ArrayList<>();
 
-    public void setArchived(boolean archived) {
-        this.archived = archived;
-    }
+    @Transient
+    private String attachmentsJson;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -40,55 +35,20 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // ============= НОВЫЕ ПОЛЯ ДЛЯ КАНБАН-ДОСКИ =============
-
-    /**
-     * Тип колонки, в которой находится задача
-     * Возможные значения:
-     * - "todo" - нужно сделать
-     * - "inprogress" - в процессе
-     * - "done" - готово
-     */
     private String columnType;
-
-    /**
-     * Позиция задачи внутри колонки (для сортировки)
-     * Чем меньше число, тем выше задача в колонке
-     */
     private Integer position;
-
-    /**
-     * Приоритет задачи
-     * Возможные значения:
-     * - "HIGH" - высокий (красный)
-     * - "MEDIUM" - средний (желтый)
-     * - "LOW" - низкий (зеленый)
-     */
     private String priority;
-
-    /**
-     * Срок выполнения задачи (опционально)
-     */
     private LocalDateTime dueDate;
 
-    // ============= КОНСТРУКТОРЫ =============
-
-    /**
-     * Пустой конструктор (обязателен для JPA)
-     * Здесь мы устанавливаем значения по умолчанию для новых полей
-     */
+    // Конструкторы
     public Task() {
-        this.createdAt = LocalDateTime.now(); // Дата создания - сейчас
-        this.columnType = "todo";              // По умолчанию в колонку "Нужно сделать"
-        this.position = 0;                      // По умолчанию позиция 0 (самая верхняя)
+        this.createdAt = LocalDateTime.now();
+        this.columnType = "todo";
+        this.position = 0;
         this.priority = "MEDIUM";
         this.archived = false;
-        // По умолчанию средний приоритет
     }
 
-    /**
-     * Полный конструктор со всеми полями
-     */
     public Task(Long id, String title, String description, String status,
                 boolean completed, User user, String columnType,
                 Integer position, String priority, LocalDateTime dueDate, boolean archived) {
@@ -106,10 +66,7 @@ public class Task {
         this.createdAt = LocalDateTime.now();
     }
 
-    // ============= ГЕТТЕРЫ И СЕТТЕРЫ =============
-
-    // --- Существующие геттеры/сеттеры ---
-
+    // Геттеры и сеттеры для всех полей
     public Long getId() {
         return id;
     }
@@ -166,8 +123,6 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    // --- НОВЫЕ геттеры/сеттеры ---
-
     public String getColumnType() {
         return columnType;
     }
@@ -200,11 +155,34 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    // ============= ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ =============
+    // Геттеры и сеттеры для archived
+    public boolean isArchived() {
+        return archived;
+    }
 
-    /**
-     * Форматирует дату создания для отображения в интерфейсе
-     */
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
+
+    // Геттеры и сеттеры для attachments
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    // Геттеры и сеттеры для attachmentsJson
+    public String getAttachmentsJson() {
+        return attachmentsJson;
+    }
+
+    public void setAttachmentsJson(String attachmentsJson) {
+        this.attachmentsJson = attachmentsJson;
+    }
+
+    // Вспомогательные методы
     public String getFormattedCreatedAt() {
         if (createdAt != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -213,9 +191,6 @@ public class Task {
         return "";
     }
 
-    /**
-     * Форматирует дату выполнения для отображения в интерфейсе
-     */
     public String getFormattedDueDate() {
         if (dueDate != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -224,19 +199,20 @@ public class Task {
         return "";
     }
 
-    /**
-     * Проверяет, просрочена ли задача
-     */
     public boolean isOverdue() {
         return dueDate != null && dueDate.isBefore(LocalDateTime.now()) && !completed;
     }
 
-    /**
-     * Возвращает CSS класс для приоритета (для стилей)
-     */
     public String getPriorityClass() {
         if (priority == null) return "medium";
         return priority.toLowerCase();
+    }
+
+    public String getFirstImageUrl() {
+        if (attachments != null && !attachments.isEmpty()) {
+            return attachments.get(0).getFilePath();
+        }
+        return null;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.energytask.app.controller;
 
+import com.energytask.app.entity.Attachment;
 import com.energytask.app.service.TaskService;
 import com.energytask.app.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.ObjectMapper;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -46,13 +49,47 @@ public class TaskController {
                            @RequestParam(required = false) String redirect,
                            Principal principal) {
         String username = principal.getName();
-        if (task.getId() == null) {
+
+        System.out.println("=== СОХРАНЕНИЕ ЗАДАЧИ ===");
+        System.out.println("ID задачи: " + task.getId());
+        System.out.println("Название: " + task.getTitle());
+        System.out.println("Attachments JSON из объекта: " + task.getAttachmentsJson());
+
+        Long taskId = task.getId();
+
+        if (taskId == null) {
             taskService.createTask(task, username);
+            taskId = task.getId();
         } else {
             taskService.updateTask(task);
         }
 
-        // Редирект на нужную страницу
+        // Обработка вложений из поля объекта
+        String attachmentsJson = task.getAttachmentsJson();
+        if (attachmentsJson != null && !attachmentsJson.isEmpty() && taskId != null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                List<String> attachmentUrls = mapper.readValue(attachmentsJson,
+                        mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+
+                System.out.println("Получены URL вложений: " + attachmentUrls);
+
+                for (String url : attachmentUrls) {
+                    String fileName = url.substring(url.lastIndexOf("/") + 1);
+                    // Проверяем, существует ли уже такое вложение
+                    boolean exists = taskService.getTaskById(taskId).getAttachments().stream()
+                            .anyMatch(a -> a.getFilePath().equals(url));
+
+                    if (!exists) {
+                        taskService.addAttachmentToTask(taskId, url, fileName, "image/jpeg", 0);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         if ("board".equals(redirect)) {
             return "redirect:/board";
         }
@@ -92,13 +129,10 @@ public class TaskController {
     @GetMapping("/task/{id}")
     @ResponseBody
     public ResponseEntity<?> getTask(@PathVariable Long id) {
-        LOGGER.info("Запрос данных задачи ID: " + id);
         try {
             Task task = taskService.getTaskById(id);
             if (task == null) {
-                LOGGER.warning("Задача с ID " + id + " не найдена");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("error", "Задача не найдена"));
+                return ResponseEntity.notFound().build();
             }
 
             String dueDateFormatted = null;
@@ -106,7 +140,18 @@ public class TaskController {
                 dueDateFormatted = task.getDueDate().toString().substring(0, 16);
             }
 
-            Map<String, Object> response = new HashMap<>();
+            // Используем List<Map<String, Object>> с явным созданием HashMap
+            List<Map<String, Object>> attachmentsInfo = new java.util.ArrayList<>();
+            for (Attachment att : task.getAttachments()) {
+                Map<String, Object> attachmentMap = new java.util.HashMap<>();
+                attachmentMap.put("id", att.getId());
+                attachmentMap.put("url", att.getFilePath());
+                attachmentMap.put("fileName", att.getFileName());
+                attachmentMap.put("fileType", att.getFileType());
+                attachmentsInfo.add(attachmentMap);
+            }
+
+            Map<String, Object> response = new java.util.HashMap<>();
             response.put("id", task.getId());
             response.put("title", task.getTitle() != null ? task.getTitle() : "");
             response.put("description", task.getDescription() != null ? task.getDescription() : "");
@@ -114,11 +159,12 @@ public class TaskController {
             response.put("columnType", task.getColumnType() != null ? task.getColumnType() : "todo");
             response.put("completed", task.isCompleted());
             response.put("dueDate", dueDateFormatted);
+            response.put("attachments", attachmentsInfo);
 
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
-            LOGGER.severe("Ошибка при загрузке задачи: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }

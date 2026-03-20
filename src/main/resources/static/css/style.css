@@ -21,7 +21,7 @@
     width: 320px !important;
     min-width: 320px !important;
     max-width: 320px !important;
-    background: #ebecf0;
+    background: #1d2022;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -251,7 +251,7 @@
 
 /* Стили для карточек задач (упрощенные) */
 .task-card {
-    background: white;
+    background: #3b4145;
     border-radius: 8px;
     padding: 12px 15px;
     margin-bottom: 10px;
